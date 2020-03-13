@@ -2,5 +2,11 @@
   "name": "petshop-backend",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "-"
+  "license": "-",
+  "scrips": {
+    "dev": "nodemon ./src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
