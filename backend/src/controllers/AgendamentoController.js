@@ -10,6 +10,7 @@ module.exports = {
     },
 
     async list(req, res){
+        let agendamento
         const { dia, mes, ano } = req.body
 
         if(!dia && !mes){
