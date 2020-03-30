@@ -8,5 +8,6 @@ roteador.post('/cadastrar', UsuarioController.store)
 roteador.get('/login', UsuarioController.index)
 
 roteador.post('/agendar', AgendamentoController.store)
+roteador.get('/listar', AgendamentoController.list)
 
 module.exports = roteador
