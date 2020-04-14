@@ -19,7 +19,7 @@ module.exports = {
 
     async index(req, res){
         const { usuario, senha } = req.body
-
+        
         let user = await Usuario.findOne({ usuario })
         if (!user) {
             return res.json({ sucesso: false })
@@ -29,7 +29,7 @@ module.exports = {
         if (user.senha == senha_escondida){
             return res.json({ sucesso: true })
         }
-        
+        console.log('a')
         return res.json({ sucesso: false })
 
     }
