@@ -27,9 +27,12 @@ module.exports = {
 
         senha_escondida = md5(`${senha}${usuario}bolinho10`)
         if (user.senha == senha_escondida){
-            return res.json({ sucesso: true })
+            return res.json({
+                sucesso: true,
+                user_id: user._id
+            })
         }
-        console.log('a')
+
         return res.json({ sucesso: false })
 
     }

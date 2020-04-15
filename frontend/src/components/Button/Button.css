@@ -1,4 +1,4 @@
-button {
+.button-component {
     transition: 0.2s;
     border: none;
     border-radius: 50px;
@@ -9,7 +9,7 @@ button {
     opacity: 0.8;
 }
 
-button:hover {
+.button-component:hover {
     transition: 0.2s;
     opacity: 1;
     cursor: pointer;
