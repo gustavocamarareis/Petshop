@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import api from '../services/api'
+import api from '../../services/api'
 
-import Button from '../components/Button/Button'
+import Button from '../../components/Button/Button'
 
 import './Login.css'
 
 export default function Login({ history }){
     const [ usuario, setUsuario ] = useState('')
     const [ senha, setSenha ] = useState('')
+
+    useEffect( () => {
+        async function verificarLogin() {
+            let user_id = localStorage.getItem('user_id')
+            
+            const resposta = await api.get(`verificar?user_id=${user_id}`)
+            if(resposta.data.sucesso) {
+                history.push('/calendario')
+            }
+        }
+
+        verificarLogin()
+    }, [] )
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -19,6 +32,7 @@ export default function Login({ history }){
             setUsuario('')
             setSenha('')
         } else {
+            localStorage.setItem('user_id', resposta.data.user_id)
             history.push('/calendario')
         }
     }

@@ -5,7 +5,10 @@ const cors = require('cors')
 
 const servidor = express()
 
-mongoose.connect('mongodb+srv://PETshop:saladadefruta@petshop-7bazx.mongodb.net/test?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://PETshop:saladadefruta@petshop-7bazx.mongodb.net/test?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
 
 servidor.use(cors())
 servidor.use(express.json())

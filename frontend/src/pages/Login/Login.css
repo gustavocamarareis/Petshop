@@ -37,3 +37,14 @@
 .login-submit-button {
     margin: 30px 25px 30px;
 }
+
+.mensagem-logago-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.mensagem-logago-container h1 {
+    margin-top: 30vh;
+}

@@ -27,10 +27,27 @@ module.exports = {
 
         senha_escondida = md5(`${senha}${usuario}bolinho10`)
         if (user.senha == senha_escondida){
-            return res.json({ sucesso: true })
+            return res.json({
+                sucesso: true,
+                user_id: user._id
+            })
         }
-        console.log('a')
+
         return res.json({ sucesso: false })
 
+    },
+
+    async verificar(req, res) {
+        const { user_id } = req.query
+
+        try {
+            const user = await Usuario.findById(user_id)
+            if(user) {
+                return res.json({ sucesso: true })
+            }
+            return res.json({ sucesso: false })
+        } catch {
+            return res.json({ sucesso: false })
+        }
     }
 }
