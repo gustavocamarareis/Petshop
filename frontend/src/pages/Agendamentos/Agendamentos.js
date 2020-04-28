@@ -4,6 +4,7 @@ import api from '../../services/api'
 
 import Header from '../../components/Header/Header'
 import Agendamento from '../../components/Agendamento/Agendamento'
+import Button from '../../components/Button/Button'
 
 import './Agendamentos.css'
 
@@ -17,6 +18,8 @@ function Agendamentos({ history }) {
     const [vetorAnos, setVetorAnos] = useState([]) 
     const [vetorMeses, setVetorMeses] = useState([])
     const [vetorDias, setVetorDias] = useState([])
+
+    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(undefined)
 
     useEffect( () => {
         async function verificarLogin() {
@@ -42,6 +45,18 @@ function Agendamentos({ history }) {
         
         for(let i = new Date().getFullYear() ; i >= 2000; i--) {
             anos.push(i)
+        }
+
+        /* configura o modal */
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         }
 
         setVetorDias(dias)
@@ -140,10 +155,11 @@ function Agendamentos({ history }) {
                                     </tr>
                                 </thead>
                                 { agendamentos.map( agendamento => {
-                                    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone } = agendamento
+                                    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, _id } = agendamento
 
                                     return (
                                         <Agendamento
+                                            id="myBtn"
                                             dia={ dia }
                                             mes={ mes }
                                             ano={ ano }
@@ -153,12 +169,42 @@ function Agendamentos({ history }) {
                                             nomeCachorro={ nomeCachorro }
                                             obs={ obs }
                                             telefone={ telefone }
+                                            onClick={ () => {
+                                                var modal = document.getElementById("myModal");
+                                                modal.style.display = "block";
+                                                setAgendamentoSelecionado(_id);
+                                            } }
                                         />
                                     )
                                 } ) }
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <Button
+                        className="modal-button"
+                        text="Editar"
+                        style={{ width: '50%', height: '30px' }}
+                    ></Button>
+                    <Button 
+                        className="modal-button"
+                        text="Deletar"
+                        style={{ width: '50%', height: '30px' }}
+                        onClick={ () => {
+                            async function deletarAgendamento() {
+                                if(window.confirm('Tem certeza que deseja deletar esse agendamento?')) {
+                                    await api.post('/cancelar', { _id: agendamentoSelecionado })
+                                    window.location.reload(false); 
+                                }
+                            }
+                            
+                            deletarAgendamento()
+                        } }
+                    ></Button>
                 </div>
             </div>
         </>

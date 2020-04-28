@@ -9,8 +9,8 @@ roteador.post('/login', UsuarioController.index)
 roteador.get('/verificar', UsuarioController.verificar)
 
 roteador.post('/agendar', AgendamentoController.store)
-roteador.put('/reagendar', AgendamentoController.edit)
+roteador.post('/reagendar', AgendamentoController.edit)
 roteador.post('/listar', AgendamentoController.list)
-roteador.delete('/cancelar', AgendamentoController.delete)
+roteador.post('/cancelar', AgendamentoController.delete)
 
 module.exports = roteador

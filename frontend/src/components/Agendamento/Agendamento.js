@@ -3,11 +3,11 @@ import React from 'react'
 import './Agendamento.css'
 
 function Agendamento(props) {
-    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone } = props
+    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, onClick } = props
 
     return(
         <tbody>
-            <tr>
+            <tr onClick={ onClick }>
                 <td className="column1">{ nomeCliente }</td>
                 <td className="column2">{ nomeCachorro }</td>
                 <td className="column3">{ `${ dia }/${ mes }/${ ano }` }</td>

@@ -36,15 +36,12 @@ module.exports = {
         if(!agendamento) {
             agendamento = []
         }
-        console.log(agendamento)
         return res.json(agendamento)
     },
 
     async delete(req, res){
         const agendamento_id = req.body._id
-
         await Agendamento.deleteOne({ _id: `${agendamento_id}` })
-
         return res.json ({ mensagem: "O agendamento foi cancelado"})
     }
 }
