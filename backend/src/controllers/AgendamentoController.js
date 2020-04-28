@@ -22,6 +22,7 @@ module.exports = {
     async list(req, res){
         let agendamento
         const { dia, mes, ano } = req.body
+        console.log(req.body)
 
         if(!dia && !mes){
              agendamento = await Agendamento.find({ ano })
@@ -32,6 +33,11 @@ module.exports = {
         if(mes && dia){
              agendamento = await Agendamento.find({dia, mes, ano})
         }
+
+        if(!agendamento) {
+            agendamento = []
+        }
+        console.log(agendamento)
         return res.json(agendamento)
     },
 

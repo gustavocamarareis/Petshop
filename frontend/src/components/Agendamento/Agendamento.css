@@ -1,9 +1,0 @@
-.agendamento-container form .dados-principais {
-    display: flex;
-    flex-direction: row;
-}
-
-.agendamento-container form input {
-    background:  none;
-    border: none;
-}
