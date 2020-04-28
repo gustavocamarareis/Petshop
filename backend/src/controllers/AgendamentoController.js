@@ -22,8 +22,7 @@ module.exports = {
     async list(req, res){
         let agendamento
         const { dia, mes, ano } = req.body
-        console.log(req.body)
-
+        
         if(!dia && !mes){
              agendamento = await Agendamento.find({ ano })
         }
