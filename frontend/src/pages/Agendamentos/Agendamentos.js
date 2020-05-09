@@ -5,6 +5,7 @@ import api from '../../services/api'
 import Header from '../../components/Header/Header'
 import Agendamento from '../../components/Agendamento/Agendamento'
 import Button from '../../components/Button/Button'
+import EditModal from '../../components/EditModal/EditModal'
 
 import './Agendamentos.css'
 
@@ -18,6 +19,8 @@ function Agendamentos({ history }) {
     const [vetorAnos, setVetorAnos] = useState([]) 
     const [vetorMeses, setVetorMeses] = useState([])
     const [vetorDias, setVetorDias] = useState([])
+
+    const [showModal, setShowModal] = useState(false)
 
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(undefined)
 
@@ -45,9 +48,9 @@ function Agendamentos({ history }) {
         
         for(let i = new Date().getFullYear() ; i >= 2000; i--) {
             anos.push(i)
-        }
-
-        /* configura o modal */
+        }    
+    
+        /* configura     o modal */
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("close")[0];
         span.onclick = function() {
@@ -88,6 +91,22 @@ function Agendamentos({ history }) {
 
     return(
         <>
+            { showModal && (
+                <EditModal 
+                    setShowModal={ setShowModal }
+                    dia={ agendamentoSelecionado.dia }
+                    mes={ agendamentoSelecionado.mes }
+                    ano={ agendamentoSelecionado.ano }
+                    hora={ agendamentoSelecionado.hora }
+                    minuto={ agendamentoSelecionado.minuto }
+                    nomeCliente={ agendamentoSelecionado.nomeCliente }
+                    nomeCachorro={ agendamentoSelecionado.nomeCachorro }
+                    cor={ agendamentoSelecionado.cor }
+                    telefone={ agendamentoSelecionado.telefone }
+                    obs={ agendamentoSelecionado.obs }
+                    agendamento_id={ agendamentoSelecionado._id }
+                />
+            ) }
             <Header history={ history } />
             <div className="limiter">
                 <div className="container-table100">
@@ -155,8 +174,7 @@ function Agendamentos({ history }) {
                                     </tr>
                                 </thead>
                                 { agendamentos.map( agendamento => {
-                                    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, _id } = agendamento
-
+                                    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, _id } = agendamento
                                     return (
                                         <Agendamento
                                             id="myBtn"
@@ -169,10 +187,11 @@ function Agendamentos({ history }) {
                                             nomeCachorro={ nomeCachorro }
                                             obs={ obs }
                                             telefone={ telefone }
+                                            cor={ cor }
                                             onClick={ () => {
                                                 var modal = document.getElementById("myModal");
                                                 modal.style.display = "block";
-                                                setAgendamentoSelecionado(_id);
+                                                setAgendamentoSelecionado(agendamento);
                                             } }
                                         />
                                     )
@@ -189,6 +208,11 @@ function Agendamentos({ history }) {
                         className="modal-button"
                         text="Editar"
                         style={{ width: '50%', height: '30px' }}
+                        onClick={ () => {
+                            var modal = document.getElementById("myModal");
+                            modal.style.display = "none";
+                            setShowModal(true)
+                        } }
                     ></Button>
                     <Button 
                         className="modal-button"
@@ -197,7 +221,7 @@ function Agendamentos({ history }) {
                         onClick={ () => {
                             async function deletarAgendamento() {
                                 if(window.confirm('Tem certeza que deseja deletar esse agendamento?')) {
-                                    await api.post('/cancelar', { _id: agendamentoSelecionado })
+                                    await api.post('/cancelar', { _id: agendamentoSelecionado._id })
                                     window.location.reload(false); 
                                 }
                             }

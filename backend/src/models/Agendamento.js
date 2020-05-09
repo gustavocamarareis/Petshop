@@ -9,7 +9,8 @@ const AgendamentoSchema = new mongoose.Schema({
     nomeCliente: String,
     nomeCachorro: String,
     obs: String,
-    telefone: String
+    telefone: String,
+    cor: String,
 })
 
 module.exports = mongoose.model('Agendamento', AgendamentoSchema)
