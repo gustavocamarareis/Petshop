@@ -866,6 +866,7 @@
   }
   
   table {
+	box-shadow: 0 0 100px rgba(0, 0, 0, 0.1);
 	border-spacing: 1;
 	border-collapse: collapse;
 	background: white;
@@ -892,10 +893,10 @@
 	border: 0;
   }
   table td, table th {
-	text-align: left;
+	text-align: center;
   }
   table td.l, table th.l {
-	text-align: right;
+	text-align: center;
   }
   table td.c, table th.c {
 	text-align: center;
@@ -906,7 +907,6 @@
   
   
   .table100-head th{
-	font-family: OpenSans-Regular;
 	font-size: 18px;
 	color: #fff;
 	line-height: 1.2;
@@ -919,7 +919,6 @@
   }
   
   tbody tr {
-	font-family: OpenSans-Regular;
 	font-size: 15px;
 	color: #808080;
 	line-height: 1.2;
@@ -933,7 +932,7 @@
   }
   
   .column1 {
-	width: 260px;
+	width: 222px;
 	padding-left: 40px;
   }
   
@@ -942,23 +941,23 @@
   }
   
   .column3 {
-	width: 245px;
+	width: 160px;
   }
   
   .column4 {
 	width: 110px;
-	text-align: right;
+	text-align: center;
   }
   
   .column5 {
-	width: 170px;
-	text-align: right;
+	width: 300px;
+	text-align: center;
   }
   
   .column6 {
-	width: 222px;
-	text-align: right;
-	padding-right: 62px;
+	width: 230px;
+	text-align: center;
+	padding-right: 40px;
   }
   
   
