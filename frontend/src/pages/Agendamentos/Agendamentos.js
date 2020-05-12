@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header'
 import Agendamento from '../../components/Agendamento/Agendamento'
 import Button from '../../components/Button/Button'
 import EditModal from '../../components/EditModal/EditModal'
+import CreateModal from '../../components/CreateModal/CreateModal'
 
 import './Agendamentos.css'
 
@@ -108,6 +109,18 @@ function Agendamentos({ history }) {
                 />
             ) }
             <Header history={ history } />
+            <div className="new-button">
+                <Button
+                    className="create-modal-button"
+                    text="Criar novo agendamento "
+                    style={{ width: '15%', height: '30px' }}
+                    onClick={ () => {
+                        //var modal = document.getElementById("myModal");
+                        //modal.style.display = "none";
+                        setShowModal(true)
+                    } }   
+                ></Button>
+            </div>
             <div className="limiter">
                 <div className="container-table100">
                     <div className="wrap-table100">
