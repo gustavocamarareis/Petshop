@@ -11,6 +11,7 @@ const AgendamentoSchema = new mongoose.Schema({
     obs: String,
     telefone: String,
     cor: String,
+    fixo: Boolean,
 })
 
 module.exports = mongoose.model('Agendamento', AgendamentoSchema)

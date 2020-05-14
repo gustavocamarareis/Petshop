@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header'
 import Agendamento from '../../components/Agendamento/Agendamento'
 import Button from '../../components/Button/Button'
 import EditModal from '../../components/EditModal/EditModal'
+import CreateModal from '../../components/CreateModal/CreateModal'
 
 import './Agendamentos.css'
 
@@ -20,7 +21,9 @@ function Agendamentos({ history }) {
     const [vetorMeses, setVetorMeses] = useState([])
     const [vetorDias, setVetorDias] = useState([])
 
-    const [showModal, setShowModal] = useState(false)
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [showCreateModal, setShowCreateModal] = useState(false)
+
 
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(undefined)
 
@@ -91,9 +94,9 @@ function Agendamentos({ history }) {
 
     return(
         <>
-            { showModal && (
+            { showEditModal && (
                 <EditModal 
-                    setShowModal={ setShowModal }
+                    setShowModal={ setShowEditModal }
                     dia={ agendamentoSelecionado.dia }
                     mes={ agendamentoSelecionado.mes }
                     ano={ agendamentoSelecionado.ano }
@@ -105,10 +108,30 @@ function Agendamentos({ history }) {
                     telefone={ agendamentoSelecionado.telefone }
                     obs={ agendamentoSelecionado.obs }
                     agendamento_id={ agendamentoSelecionado._id }
+                    fixo={ agendamentoSelecionado.fixo }
+                />
+            ) }
+
+            { showCreateModal && (
+                <CreateModal 
+                    setShowModal={ setShowCreateModal }
                 />
             ) }
             <Header history={ history } />
-            <div className="limiter">
+            <div 
+                style={{ width: '100vw', background: 'white', padding: '30px' }}
+                className="new-button"
+            >
+                <Button
+                    className="create-modal-button"
+                    text="Criar novo agendamento "
+                    style={{ width: '20%', height: '40px' }}
+                    onClick={ () => {
+                        setShowCreateModal(true)
+                    } }   
+                ></Button>
+            </div>
+            <div style={{ margin: '0 !important' }} className="limiter">
                 <div className="container-table100">
                     <div className="wrap-table100">
                         <div className="table100">
@@ -171,10 +194,11 @@ function Agendamentos({ history }) {
                                         <th className="column4">Horário</th>
                                         <th className="column5">Observações</th>
                                         <th className="column6">Telefone</th>
+                                        <th className="column7">Dia Fixo</th>
                                     </tr>
                                 </thead>
                                 { agendamentos.map( agendamento => {
-                                    const { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, _id } = agendamento
+                                    const { fixo, dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, _id } = agendamento
                                     return (
                                         <Agendamento
                                             id="myBtn"
@@ -188,6 +212,7 @@ function Agendamentos({ history }) {
                                             obs={ obs }
                                             telefone={ telefone }
                                             cor={ cor }
+                                            fixo={ fixo }
                                             onClick={ () => {
                                                 var modal = document.getElementById("myModal");
                                                 modal.style.display = "block";
@@ -211,7 +236,7 @@ function Agendamentos({ history }) {
                         onClick={ () => {
                             var modal = document.getElementById("myModal");
                             modal.style.display = "none";
-                            setShowModal(true)
+                            setShowEditModal(true)
                         } }
                     ></Button>
                     <Button 

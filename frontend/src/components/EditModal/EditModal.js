@@ -9,6 +9,7 @@ import Button from '../../components/Button/Button'
 import api from '../../services/api'
 
 import './EditModal.css'
+import { Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 export default function TransitionsModal(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [fixo, setFixo] = useState(props.fixo)
 
   const [nomeCliente, setNomeCliente] = useState(props.nomeCliente)
   const [nomeCachorro, setNomeCachorro] = useState(props.nomeCachorro)
@@ -49,7 +51,7 @@ export default function TransitionsModal(props) {
 
   async function editarAgendamento(e) {
     e.preventDefault()
-    const resposta = await api.post(`/reagendar?agendamento_id=${ props.agendamento_id }`, { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor })
+    const resposta = await api.post(`/reagendar?agendamento_id=${ props.agendamento_id }`, { dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, fixo })
     window.location.reload(false); 
   }
 
@@ -113,7 +115,6 @@ export default function TransitionsModal(props) {
                                     <div className="dropdown edit-color">
                                         <select name="two" className="dropdown-select"
                                             onChange={ (e) => {
-                                                console.log(e.target.value)
                                                 setCor(`${ e.target.value }`)
                                             } }
                                         >
@@ -123,6 +124,16 @@ export default function TransitionsModal(props) {
                                             <option value="rgb(0, 255, 0, 0.3)">Verde</option>
                                             <option value="rgb(0, 0, 255, 0.3)">Azul</option>
                                         </select>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                      <Checkbox
+                                        style={{ marginTop: '30px' }}
+                                        checked={ fixo }
+                                        onChange={ () => {
+                                          setFixo(!fixo)
+                                        } }
+                                      />
+                                      <p style={{ marginTop: '40px' }}>Agendamento semanal</p>
                                     </div>
                                 </div>
                                 <div className="edit-coluna2">
