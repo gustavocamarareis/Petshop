@@ -7,6 +7,7 @@ import Agendamento from '../../components/Agendamento/Agendamento'
 import Button from '../../components/Button/Button'
 import EditModal from '../../components/EditModal/EditModal'
 import CreateModal from '../../components/CreateModal/CreateModal'
+import AgendamentoSelecionadoModal from '../../components/AgendamentoSelecionadoModal/AgendamentoSelecionadoModal'
 
 import './Agendamentos.css'
 
@@ -23,6 +24,7 @@ function Agendamentos({ history }) {
 
     const [showEditModal, setShowEditModal] = useState(false)
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [showAgendamentoSelecionadoModal, setShowAgendamentoSelecionadoModal] = useState(false)
 
 
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(undefined)
@@ -52,18 +54,6 @@ function Agendamentos({ history }) {
         for(let i = new Date().getFullYear() ; i >= 2000; i--) {
             anos.push(i)
         }    
-    
-        /* configura     o modal */
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
 
         setVetorDias(dias)
         setVetorMeses(meses)
@@ -87,13 +77,55 @@ function Agendamentos({ history }) {
 
             resposta = await api.post('/listar', { ano: requestAno, mes: requestMes, dia: requestDia })
 
-            setAgendamentos(resposta.data)
+            const agendamentosFixos = []
+            let agendamentosNormais = []
+            let agendamentosOrganizados = []
+
+            console.log(resposta)
+
+            
+            resposta.data.map(agendamento => {
+                if(agendamento.fixo) {
+                    agendamentosFixos.push(agendamento)
+                } else {
+                    agendamentosNormais.push(agendamento)
+                }
+            })
+            /*
+            for(let i = 0; i < agendamentosNormais.length - 1; i++) {
+                for(let j = 1; j < agendamentosNormais.length; j++) {
+                    if(agendamentosNormais[i].mes > agendamentosNormais[j].mes) {
+                        let temp = agendamentosNormais[i]
+                        agendamentosNormais[i] = agendamentosNormais[j]
+                        agendamentosNormais[j] = temp
+                    } else if(agendamentosNormais[i].mes == agendamentosNormais[j].mes){
+                        if(agendamentosNormais[i].dia > agendamentosNormais[j].dia) {
+                            let temp = agendamentosNormais[i]
+                            agendamentosNormais[i] = agendamentosNormais[j]
+                            agendamentosNormais[j] = temp
+                        }
+                    }
+                }
+            }
+
+            agendamentosOrganizados = [].concat(agendamentosFixos, agendamentosNormais)
+            setAgendamentos(agendamentosOrganizados)
+            */
+           setAgendamentos(resposta.data)
         }
         getAgendamentos()
     }, [ano, mes, dia])
 
     return(
         <>
+            { showAgendamentoSelecionadoModal && (
+                <AgendamentoSelecionadoModal
+                    agendamentoSelecionado={ agendamentoSelecionado }
+                    setShowEditModal={ setShowEditModal }
+                    setShowAgendamentoSelecionadoModal={ setShowAgendamentoSelecionadoModal }
+                />
+            ) }
+
             { showEditModal && (
                 <EditModal 
                     setShowModal={ setShowEditModal }
@@ -214,8 +246,7 @@ function Agendamentos({ history }) {
                                             cor={ cor }
                                             fixo={ fixo }
                                             onClick={ () => {
-                                                var modal = document.getElementById("myModal");
-                                                modal.style.display = "block";
+                                                setShowAgendamentoSelecionadoModal(true)
                                                 setAgendamentoSelecionado(agendamento);
                                             } }
                                         />
@@ -224,36 +255,6 @@ function Agendamentos({ history }) {
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div id="myModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <Button
-                        className="modal-button"
-                        text="Editar"
-                        style={{ width: '50%', height: '30px' }}
-                        onClick={ () => {
-                            var modal = document.getElementById("myModal");
-                            modal.style.display = "none";
-                            setShowEditModal(true)
-                        } }
-                    ></Button>
-                    <Button 
-                        className="modal-button"
-                        text="Deletar"
-                        style={{ width: '50%', height: '30px' }}
-                        onClick={ () => {
-                            async function deletarAgendamento() {
-                                if(window.confirm('Tem certeza que deseja deletar esse agendamento?')) {
-                                    await api.post('/cancelar', { _id: agendamentoSelecionado._id })
-                                    window.location.reload(false); 
-                                }
-                            }
-                            
-                            deletarAgendamento()
-                        } }
-                    ></Button>
                 </div>
             </div>
         </>
