@@ -40,10 +40,15 @@ module.exports = {
     async verificar(req, res) {
         const { user_id } = req.query
 
-        const user = await Usuario.findById(user_id)
-        if(user) {
-            return res.json({ sucesso: true })
+        try {
+            const user = await Usuario.findById(user_id)
+            if(user) {
+                return res.json({ sucesso: true })
+            }
+            return res.json({ sucesso: false })
+        } 
+        catch(e) {
+            return res.json({ sucesso: false })
         }
-        return res.json({ sucesso: false })
     }
 }

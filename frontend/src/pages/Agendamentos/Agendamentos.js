@@ -10,13 +10,26 @@ import CreateModal from '../../components/CreateModal/CreateModal'
 import AgendamentoSelecionadoModal from '../../components/AgendamentoSelecionadoModal/AgendamentoSelecionadoModal'
 
 import './Agendamentos.css'
+import { parseWithOptions } from 'date-fns/fp'
 
-function Agendamentos({ history }) {
+function Agendamentos(props) {
     const [agendamentos, setAgendamentos] = useState([])
+    let iniciarDia
+    let iniciarMes
+    let iniciarAno
 
-    const [ano, setAno] = useState(new Date().getFullYear())
-    const [mes, setMes] = useState(undefined)
-    const [dia, setDia] = useState(undefined)
+    if(props.dia && props.mes && props.ano) {
+        iniciarDia = props.dia
+        iniciarMes = props.mes
+        iniciarAno = props.ano
+    } else {
+        iniciarDia = undefined
+        iniciarMes = undefined
+        iniciarAno = new Date().getFullYear()
+    }
+    const [ano, setAno] = useState(iniciarAno)
+    const [mes, setMes] = useState(iniciarMes)
+    const [dia, setDia] = useState(iniciarDia)
 
     const [vetorAnos, setVetorAnos] = useState([]) 
     const [vetorMeses, setVetorMeses] = useState([])
@@ -35,7 +48,7 @@ function Agendamentos({ history }) {
             
             const resposta = await api.get(`verificar?user_id=${user_id}`)
             if(!resposta.data.sucesso) {
-                history.push('/')
+                props.history.push('/')
             }
         }
         verificarLogin()
@@ -81,9 +94,6 @@ function Agendamentos({ history }) {
             let agendamentosNormais = []
             let agendamentosOrganizados = []
 
-            console.log(resposta)
-
-            
             resposta.data.map(agendamento => {
                 if(agendamento.fixo) {
                     agendamentosFixos.push(agendamento)
@@ -91,30 +101,27 @@ function Agendamentos({ history }) {
                     agendamentosNormais.push(agendamento)
                 }
             })
-            /*
-            for(let i = 0; i < agendamentosNormais.length - 1; i++) {
-                for(let j = 1; j < agendamentosNormais.length; j++) {
-                    if(agendamentosNormais[i].mes > agendamentosNormais[j].mes) {
-                        let temp = agendamentosNormais[i]
-                        agendamentosNormais[i] = agendamentosNormais[j]
-                        agendamentosNormais[j] = temp
-                    } else if(agendamentosNormais[i].mes == agendamentosNormais[j].mes){
-                        if(agendamentosNormais[i].dia > agendamentosNormais[j].dia) {
-                            let temp = agendamentosNormais[i]
-                            agendamentosNormais[i] = agendamentosNormais[j]
-                            agendamentosNormais[j] = temp
-                        }
-                    }
-                }
+
+            function compare(a, b){
+                let data1 = new Date(a.ano, a.mes, a.dia);
+                let data2 = new Date(b.ano, b.mes, b.dia);
+
+                return data2 - data1;
             }
+
+            agendamentosNormais = agendamentosNormais.slice().sort(compare);
 
             agendamentosOrganizados = [].concat(agendamentosFixos, agendamentosNormais)
             setAgendamentos(agendamentosOrganizados)
-            */
-           setAgendamentos(resposta.data)
         }
         getAgendamentos()
     }, [ano, mes, dia])
+
+    function mudarCor() {
+        if(document.getElementsByClassName('calendar')[0]) {
+            document.getElementsByClassName('calendar')[0].style.background = 'none'
+        }
+    }
 
     return(
         <>
@@ -149,11 +156,41 @@ function Agendamentos({ history }) {
                     setShowModal={ setShowCreateModal }
                 />
             ) }
-            <Header history={ history } />
-            <div 
-                style={{ width: '100vw', background: 'white', padding: '30px' }}
-                className="new-button"
-            >
+            { !props.noHeader && (
+                <Header history={ props.history } />
+            ) }
+            { agendamentos.length == 0 && (
+                <>
+                    { true && mudarCor() }
+                    <div 
+                        style={{ width: '100vw', background: 'none', padding: '30px', display: 'flex', flexDirection: 'column' }}
+                        className="new-button"
+                    >
+                        <h1 style={{ marginTop: '10%', justifyContent: 'center' }}>Não há agendamentos para essa data</h1>
+                        <Button
+                            className="create-modal-button"
+                            text="Criar novo agendamento"
+                            style={{ width: '20%', height: '40px', marginTop: '5%' }}
+                            onClick={ () => {
+                                setShowCreateModal(true)
+                            } }   
+                        ></Button>
+                        <Button
+                            className="create-modal-button"
+                            text="Voltar"
+                            style={{ width: '20%', height: '40px', marginTop: '1%' }}
+                            onClick={ () => {
+                                window.location.reload(false); 
+                            } }   
+                        ></Button>
+                    </div>
+                </>
+            ) }
+            { agendamentos.length > 0 && (
+                <div 
+                    style={{ width: '100vw', background: 'white', padding: '30px' }}
+                    className="new-button"
+                >
                 <Button
                     className="create-modal-button"
                     text="Criar novo agendamento "
@@ -162,101 +199,109 @@ function Agendamentos({ history }) {
                         setShowCreateModal(true)
                     } }   
                 ></Button>
-            </div>
-            <div style={{ margin: '0 !important' }} className="limiter">
-                <div className="container-table100">
-                    <div className="wrap-table100">
-                        <div className="table100">
-                            <section className="container">
-                                <div className="dropdown">
-                                    <select name="one" className="dropdown-select"
-                                        onChange={ (e) => {
-                                            setDia(parseInt(e.target.value))
-                                        } }
-                                    >
-                                        <option value="">Selecione o dia</option>
-                                        { true && (
-                                            vetorDias.map( dia => {
-                                                return (
-                                                    <option value={ dia }>{ dia }</option>
-                                                )
-                                            } )
-                                        ) }
-                                    </select>
-                                </div>
-                                <div className="dropdown">
-                                    <select name="two" className="dropdown-select"
-                                        onChange={ (e) => {
-                                            setMes(parseInt(e.target.value))
-                                        } }
-                                    >
-                                        <option value="">Selecione o mês</option>
-                                        { true && (
-                                            vetorMeses.map( mes => {
-                                                return (
-                                                    <option value={ mes }>{ mes }</option>
-                                                )
-                                            } )
-                                        ) }
-                                    </select>
-                                </div>
-                                <div className="dropdown">
-                                    <select name="two" className="dropdown-select"
-                                        onChange={ (e) => {
-                                            setAno(parseInt(e.target.value))
-                                        } }
-                                    >
-                                        <option value="">Selecione o ano</option>
-                                        { true && (
-                                            vetorAnos.map( ano => {
-                                                return (
-                                                    <option value={ ano }>{ ano }</option>
-                                                )
-                                            } )
-                                        ) }
-                                    </select>
-                                </div>
-                            </section>
-                            <table>
-                                <thead>
-                                    <tr className="table100-head">
-                                        <th className="column1">Cliente</th>
-                                        <th className="column2">Nome do pet</th>
-                                        <th className="column3">Data</th>
-                                        <th className="column4">Horário</th>
-                                        <th className="column5">Observações</th>
-                                        <th className="column6">Telefone</th>
-                                        <th className="column7">Dia Fixo</th>
-                                    </tr>
-                                </thead>
-                                { agendamentos.map( agendamento => {
-                                    const { fixo, dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, _id } = agendamento
-                                    return (
-                                        <Agendamento
-                                            id="myBtn"
-                                            dia={ dia }
-                                            mes={ mes }
-                                            ano={ ano }
-                                            hora={ hora }
-                                            minuto={ minuto }
-                                            nomeCliente={ nomeCliente }
-                                            nomeCachorro={ nomeCachorro }
-                                            obs={ obs }
-                                            telefone={ telefone }
-                                            cor={ cor }
-                                            fixo={ fixo }
-                                            onClick={ () => {
-                                                setShowAgendamentoSelecionadoModal(true)
-                                                setAgendamentoSelecionado(agendamento);
-                                            } }
-                                        />
-                                    )
-                                } ) }
-                            </table>
+                </div>
+            ) }
+            { agendamentos.length > 0 && (
+                <div style={{ margin: '0 !important' }} className="limiter">
+                    <div className="container-table100">
+                        <div className="wrap-table100">
+                            <div className="table100">
+                                <section className="container">
+                                    { !props.dia && (
+                                        <>
+                                            <div className="dropdown">
+                                                <select name="one" className="dropdown-select"
+                                                    onChange={ (e) => {
+                                                        setDia(parseInt(e.target.value))
+                                                    } }
+                                                >
+                                                    <option value="">Selecione o dia</option>
+                                                    { true && (
+                                                        vetorDias.map( dia => {
+                                                            return (
+                                                                <option value={ dia }>{ dia }</option>
+                                                            )
+                                                        } )
+                                                    ) }
+                                                </select>
+                                            </div>
+                                            <div className="dropdown">
+                                                <select name="two" className="dropdown-select"
+                                                    onChange={ (e) => {
+                                                        setMes(parseInt(e.target.value))
+                                                    } }
+                                                >
+                                                    <option value="">Selecione o mês</option>
+                                                    { true && (
+                                                        vetorMeses.map( mes => {
+                                                            return (
+                                                                <option value={ mes }>{ mes }</option>
+                                                            )
+                                                        } )
+                                                    ) }
+                                                </select>
+                                            </div>
+                                            <div className="dropdown">
+                                                <select name="two" className="dropdown-select"
+                                                    onChange={ (e) => {
+                                                        setAno(parseInt(e.target.value))
+                                                    } }
+                                                >
+                                                    <option value="">Selecione o ano</option>
+                                                    { true && (
+                                                        vetorAnos.map( ano => {
+                                                            return (
+                                                                <option value={ ano }>{ ano }</option>
+                                                            )
+                                                        } )
+                                                    ) }
+                                                </select>
+                                            </div>
+                                        </>
+                                    ) }
+                                </section>
+                                <table>
+                                    <thead>
+                                        <tr className="table100-head">
+                                            <th className="column1">Cliente</th>
+                                            <th className="column2">Nome do pet</th>
+                                            <th className="column3">Data</th>
+                                            <th className="column4">Horário</th>
+                                            <th className="column5">Observações</th>
+                                            <th className="column6">Telefone</th>
+                                            <th className="column7">Dia Fixo</th>
+                                        </tr>
+                                    </thead>
+                                    { agendamentos.map( agendamento => {
+                                        const { fixo, dia, mes, ano, hora, minuto, nomeCliente, nomeCachorro, obs, telefone, cor, _id } = agendamento
+                                        return (
+                                            <Agendamento
+                                                id="myBtn"
+                                                _id={ _id }
+                                                dia={ dia }
+                                                mes={ mes }
+                                                ano={ ano }
+                                                hora={ hora }
+                                                minuto={ minuto }
+                                                nomeCliente={ nomeCliente }
+                                                nomeCachorro={ nomeCachorro }
+                                                obs={ obs }
+                                                telefone={ telefone }
+                                                cor={ cor }
+                                                fixo={ fixo }
+                                                onClick={ () => {
+                                                    setShowAgendamentoSelecionadoModal(true)
+                                                    setAgendamentoSelecionado(agendamento);
+                                                } }
+                                            />
+                                        )
+                                    } ) }
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            ) }
         </>
     )
 }

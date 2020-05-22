@@ -20,7 +20,7 @@ function Header(props) {
     return(
         <div className="header-page">
             <button className="header-buttons" onClick={ handleLogout }>Logout</button>
-            <button className="header-buttons" onClick={ handleCalendario }>Calendário</button>
+            <button id="calendario" className="header-buttons" onClick={ handleCalendario }>Calendário</button>
             <button className="header-buttons" onClick={ handleAgendamentos }>Agendamentos</button>
         </div>
     )

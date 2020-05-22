@@ -26,14 +26,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TransitionsModal(props) {
+  let iniciarDia 
+  let iniciarMes 
+  let iniciarAno 
+  
+  if(props.dia && props.mes && props.ano) {
+    iniciarDia = props.dia
+    iniciarMes = props.mes
+    iniciarAno = props.ano
+  } else {
+      iniciarDia = ''
+      iniciarMes = ''
+      iniciarAno = ''
+  }
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
   const [nomeCliente, setNomeCliente] = useState('')
   const [nomeCachorro, setNomeCachorro] = useState('')
-  const [dia, setDia] = useState('')
-  const [mes, setMes] = useState('')
-  const [ano, setAno] = useState('')
+  const [dia, setDia] = useState(iniciarDia)
+  const [mes, setMes] = useState(iniciarMes)
+  const [ano, setAno] = useState(iniciarAno)
   const [hora, setHora] = useState('')
   const [minuto, setMinuto] = useState('')
   const [obs, setObs] = useState('')

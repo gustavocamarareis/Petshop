@@ -1,11 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as dateFns from 'date-fns'
+
+import CreateModal from '../CreateModal/CreateModal'
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+
+import Button from '../../components/Button/Button'
+import Agendamentos from '../../pages/Agendamentos/Agendamentos'
 
 import './Calendario.css'
 
 function Calendar() {
     const [currentMonth, setCurrentMonth] = useState(new Date())
     const [selectedDate, setSelectedDate] = useState(new Date())
+    const [showModal, setShowModal] = useState(false)
+    const [showAgendamentos, setShowAgendamentos] = useState(false)
+    const [showPage, setShowPage] = useState(true)
+
+    const [showCreateModal, setShowCreateModal] = useState(false)
+
+    const useStyles = makeStyles((theme) => ({
+        modal: {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        paper: {
+          backgroundColor: theme.palette.background.paper,
+          border: '2px solid #000',
+          boxShadow: theme.shadows[5],
+          padding: theme.spacing(2, 4, 3),
+        },
+      }));
+
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const translateMonth = (month) => {
         let translatedMonth
@@ -101,6 +140,9 @@ function Calendar() {
     }
 
     const renderCells = () => {
+        if(document.getElementsByClassName('calendar')[0]) {
+            document.getElementsByClassName('calendar')[0].style.background = 'white'
+        }
         const monthStart = dateFns.startOfMonth(currentMonth);
         const monthEnd = dateFns.endOfMonth(monthStart);
         const startDate = dateFns.startOfWeek(monthStart);
@@ -123,7 +165,10 @@ function Calendar() {
                     : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
                 }`}
                 key={day}
-                onClick={() => onDateClick(dateFns.toDate(cloneDay))}
+                onClick={() => { 
+                    setShowModal(! showModal)
+                    onDateClick(dateFns.toDate(cloneDay))
+                } }
             >
                 <span className="number">{formattedDate}</span>
                 <span className="bg">{formattedDate}</span>
@@ -156,9 +201,90 @@ function Calendar() {
 
     return(
         <div className="calendar">
-            {renderHeader()}
-            {renderDays()}
-            {renderCells()}
+            { showCreateModal && (
+                <CreateModal 
+                    dia={ selectedDate.getDate() }
+                    mes={ currentMonth.getMonth() + 1 }
+                    ano={ currentMonth.getFullYear() }
+                    setShowModal={ setShowCreateModal }
+                />
+            ) }
+            { showAgendamentos && (
+                <Agendamentos 
+                    dia={ selectedDate.getDate() }
+                    mes={ currentMonth.getMonth() + 1 }
+                    ano={ currentMonth.getFullYear() }
+                    noHeader={ true }
+                />
+            ) }
+            { showModal && (
+                <div className="edit-modal">
+                <Modal
+                  aria-labelledby="transition-modal-title"
+                  aria-describedby="transition-modal-description"
+                  className={classes.modal + ' agendamentoSelecionadoModal'}
+                  open={open}
+                  onClose={handleClose}
+                  closeAfterTransition
+                  BackdropComponent={Backdrop}
+                  BackdropProps={{
+                    timeout: 500,
+                  }}
+                >
+                  <Fade in={open}>
+                      <div className={classes.paper}>
+                          <span 
+                              className="close"
+                              onClick={ () => {
+                                  setShowModal(! showModal)
+                              } }
+                          >&times;</span>
+                          <Button
+                              className="modal-button"
+                              text="Criar novo agendamento"
+                              style={{ width: '100%', height: '30px' }}
+                              onClick={ () => {
+                                setShowCreateModal(true)
+                              } }
+                          ></Button>
+                          <Button 
+                              className="modal-button"
+                              text="Ver agendamentos"
+                              style={{ width: '100%', height: '30px' }}
+                              onClick={ () => {
+                                  function onClickCalendario() {
+                                     setShowPage(true)
+                                     setShowAgendamentos(false)
+                                  }
+                                  setShowAgendamentos(true)
+                                  setShowModal(false)
+                                  setShowPage(false)
+                                  document.getElementById('calendario').onclick = onClickCalendario
+                                  /*
+                                  async function deletarAgendamento() {
+                                      if(window.confirm('Tem certeza que deseja deletar esse agendamento?')) {
+                                          await api.post('/cancelar', { _id: props.agendamentoSelecionado._id })
+                                          window.location.reload(false); 
+                                      }
+                                  }
+                                  */
+                                  
+                                  //deletarAgendamento()
+                              } }
+                          ></Button>
+                    </div>
+                  </Fade>
+                </Modal>
+              </div>
+            ) }
+            { showPage && (
+                <>
+                    {renderHeader()}
+                    {renderDays()}
+                    {renderCells()}
+                </>
+            )
+            } }
         </div>
     )
 }
