@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -60,6 +60,7 @@ export default function TransitionsModal(props) {
   };
 
   const handleClose = () => {
+    props.setShowModal(false)
     setOpen(false);
   };
 
@@ -148,7 +149,7 @@ export default function TransitionsModal(props) {
                                         </select>
                                     </div>
                                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                      <Checkbox
+                                     <Checkbox
                                         style={{ marginTop: '30px' }}
                                         checked={ fixo }
                                         onChange={ () => {
@@ -183,7 +184,7 @@ export default function TransitionsModal(props) {
                                     <textarea 
                                         id="obs"
                                         value={ obs } 
-                                        onChange={ (e) => setObs(e.target.value) }></textarea>
+                                 onChange={ (e) => setObs(e.target.value) }></textarea>
                                     </div>
                             </div>
                             <div className="edit-buttons">

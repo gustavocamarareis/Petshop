@@ -33,6 +33,7 @@ export default function TransitionsModal(props) {
   };
 
   const handleClose = () => {
+    props.setShowAgendamentoSelecionadoModal(false)
     setOpen(false);
   };
 
@@ -55,7 +56,6 @@ export default function TransitionsModal(props) {
                 <span 
                     className="close"
                     onClick={ () => {
-                        props.setShowAgendamentoSelecionadoModal(false)
                         setOpen(false)
                     } }
                 >&times;</span>

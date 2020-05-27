@@ -36,7 +36,7 @@ function Calendar() {
       }));
 
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
         setOpen(true);
@@ -60,7 +60,7 @@ function Calendar() {
         } else if(month.includes('May')) {
             translatedMonth = month.replace('May', 'Maio')
         } else if(month.includes('June')) {
-            translatedMonth = month.replace('June', 'Junho')
+           translatedMonth = month.replace('June', 'Junho')
         } else if(month.includes('July')) {
             translatedMonth = month.replace('July', 'Julho')
         } else if(month.includes('August')) {
@@ -166,7 +166,7 @@ function Calendar() {
                 }`}
                 key={day}
                 onClick={() => { 
-                    setShowModal(! showModal)
+                    setOpen(true)
                     onDateClick(dateFns.toDate(cloneDay))
                 } }
             >
@@ -202,7 +202,8 @@ function Calendar() {
     return(
         <div className="calendar">
             { showCreateModal && (
-                <CreateModal 
+                <CreateModal
+                    className="testeeee"
                     dia={ selectedDate.getDate() }
                     mes={ currentMonth.getMonth() + 1 }
                     ano={ currentMonth.getFullYear() }
@@ -217,7 +218,6 @@ function Calendar() {
                     noHeader={ true }
                 />
             ) }
-            { showModal && (
                 <div className="edit-modal">
                 <Modal
                   aria-labelledby="transition-modal-title"
@@ -236,7 +236,7 @@ function Calendar() {
                           <span 
                               className="close"
                               onClick={ () => {
-                                  setShowModal(! showModal)
+                                  setOpen(false)
                               } }
                           >&times;</span>
                           <Button
@@ -276,11 +276,9 @@ function Calendar() {
                   </Fade>
                 </Modal>
               </div>
-            ) }
             { showPage && (
                 <>
                     {renderHeader()}
-                    {renderDays()}
                     {renderCells()}
                 </>
             )
